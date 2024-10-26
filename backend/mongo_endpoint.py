@@ -1,21 +1,23 @@
 from pymongo import MongoClient
 from fastapi import FastAPI
 import uvicorn
+from typing import List, Dict
 import json
 
 app = FastAPI()
 
-@app.get("/get-parts/")
-async def get_parts(vehicle: str, collection: str, query: str):
+@app.get("/api/get-parts/")
+async def get_parts(vehicle: str, collection: str):
     uri = "mongodb+srv://make-man:b3TaqsGZ6gYY1H4x@cluster0.r4krv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     client = MongoClient(uri)
     try:
         database = client.get_database(vehicle)
         parts = database.get_collection(collection)
-        query = json.loads(query)
-        parts = parts.find(query)
-        client.close()
-        return parts
+        records = list(parts.find())
+        for record in records:
+            record["_id"] = str(record["_id"])
+            
+        return {"records":records}
     except Exception as e:
         raise Exception("Unable to find the document due to the following error: ", e)
 

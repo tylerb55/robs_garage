@@ -133,7 +133,7 @@ export const MultiselectCarousel = {
     trace.type === 'ext_multiselect_carousel' || trace.payload.name === 'ext_multiselect_carousel',
   render: ({trace, element}) => {
     const MultiselectCarouselContainer = document.createElement('div');
-    const defaultJson = [{"Battery":{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"}},{"Battery":{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"}},{"Battery":{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"}}];
+    const defaultJson = [{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"},{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"},{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"}];
     const Parts = (trace && trace.payload && trace.payload.parts_list) || defaultJson; 
     console.log(Parts);
     MultiselectCarouselContainer.innerHTML = `
@@ -294,16 +294,17 @@ export const MultiselectCarousel = {
       let cardsHTML = '';
       cardsHTML += '<div class="row">';
       for (let j = 0; j < cards; j++) {
+        console.log(parts[j].Image)
         let part = JSON.stringify(parts[j]);
         cardsHTML += `<div class="card">
-          <img src="${parts[j].Battery.image}" alt="">
+          <img src="${parts[j].Image}" alt="">
           <div class="content">
             <div class="row">
               <div class="details">
-                <span>${parts[j].Battery.Categories}</span>
-                <p>${parts[j].Battery.Manufacturer}</p>
+                <span>${parts[j].Categories}</span>
+                <p>${parts[j].Manufacturer}</p>
               </div>
-              <div class="price">£${parts[j].Battery.Price}</div>
+              <div class="price">£${parts[j].Price}</div>
             </div>
             <div class="buttons">
               <button class="select-btn" data-part="${part}">Select</button>
