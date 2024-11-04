@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import {
   MultiselectCarousel,
+  MultiselectCarouselv2,
   MultiselectCheckbox,
 } from './extensions'; // Adjust the path accordingly
 
@@ -28,13 +29,15 @@ function App() {
           }
         },
         render: {
-          mode: 'overlay',
+          mode: 'embedded',
+          target: document.getElementById('voiceflow-chat-frame'),
         },
         autostart: true,
         allowDangerousHTML: true,
         assistant: {
           extensions: [
             MultiselectCarousel,
+            MultiselectCarouselv2,
             MultiselectCheckbox,
           ],
         },

@@ -282,9 +282,8 @@ export const MultiselectCarousel = {
       </div>
     </div>
     <div class="button-container">
-      <button class="submit" disabled>Confirm Part Selection</button>
-      <button class="skip">Skip Selection</button>
-      <button class="filter">Filter Selection</button>
+      <button class="submit" disabled>Confirm Part(s)</button>
+      <button class="filter">Filter Parameters</button>
       <button class="next">Next Work Item</button>
     </div>
     `;
@@ -297,7 +296,7 @@ export const MultiselectCarousel = {
         console.log(parts[j].Image)
         let part = JSON.stringify(parts[j]);
         cardsHTML += `<div class="card">
-          <img src="${parts[j].Image}" alt="">
+          <img src="${parts[j].Image}" alt="" id="${parts[j].Parts_Number_Supplier}">
           <div class="content">
             <div class="row">
               <div class="details">
@@ -318,10 +317,11 @@ export const MultiselectCarousel = {
 
     let selectedParts = [];
     const submitButton = MultiselectCarouselContainer.querySelector('.submit');
-    const skipButton = MultiselectCarouselContainer.querySelector('.skip');
     const filterButton = MultiselectCarouselContainer.querySelector('.filter');
     const nextButton = MultiselectCarouselContainer.querySelector('.next');
     let isSubmitted = false;
+
+
 
     function updateSubmitButton() {
       submitButton.disabled =
@@ -357,12 +357,6 @@ export const MultiselectCarousel = {
           payload: { "selected_parts":selectedParts },
         });
       }
-    });
-
-    skipButton.addEventListener('click', function () {
-      window.voiceflow.chat.interact({
-        type: 'skip',
-      });
     });
 
     filterButton.addEventListener('click', function () {
@@ -412,6 +406,205 @@ export const MultiselectCarousel = {
     });
 
     updateScrollButtons();
+
+    element.appendChild(MultiselectCarouselContainer);
+  },
+}
+
+export const MultiselectCarouselv2 = {
+  name:'MultiselectCarousel',
+  type:'response',
+  match: ({trace}) =>
+    trace.type === 'ext_multiselect_carousel_v2' || trace.payload.name === 'ext_multiselect_carousel_v2',
+  render: ({trace, element}) => {
+    const MultiselectCarouselContainer = document.createElement('div');
+    const defaultJson = [{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"},{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"},{"part":"placeholder","Manufacturer":"placeholder","Parts_Number_Supplier":"1234","Price":"$20","Categories":"placeholder","Image":"https://themonroefirm.com/wp-content/uploads/2015/01/300x300.jpg"}];
+    const Parts = (trace && trace.payload && trace.payload.parts_list) || defaultJson; 
+    console.log(Parts);
+    MultiselectCarouselContainer.innerHTML = `
+    <style>
+        * { padding: 0; margin: 0; box-sizing: border-box; }
+        .c-gMpNkY.c-PJLV-jueArD-from-system {
+        background-color: transparent;
+        } 
+        .part-selection {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          gap: 10px;
+          margin-bottom: 0px;
+          padding-bottom: 10px;
+          transition: transform 0.5s ease;
+        }
+        .row {
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+        }
+        .card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          overflow: hidden;
+          border-radius: 8px;
+          width: 248px;
+          background-color: #f4f4f4;
+          min-width: 200px;
+        }
+        .card img {
+          width: 100%;
+          border-radius: 8px;
+          height: 100%;
+          object-fit: contain;
+        }
+        .content {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          width: 100%;
+          padding: 12px;
+        }
+        .details span, .price {
+          font-size: 15px;
+          font-weight: 600;
+          color: black;
+        }
+        .details p {
+          font-size: 13px;
+          color: #737376;
+        }
+        .select-btn {
+          display: block;
+          width: 100%;
+          margin: 10px auto;
+          padding: 12px;
+          background-color: white;
+          color: #03045e;
+          box-shadow: rgba(0, 0, 0, 0.12) 0px 5px 8px -8px, rgba(0, 0, 0, 0.12) 0px 2px 4px -3px, rgba(0, 0, 0, 0.03) 0px 0px 0px 1px, rgba(0, 0, 0, 0.01) 0px 1px 3px 1px;
+          font-size: 16px;
+          line-weight: 20px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          text-align: center;
+          transition: background-color 0.3s ease;
+        }
+        .select-btn.selected {
+          background-color: #6B6B6B;
+        }
+        .submit {
+          background-color: #2e6ee1;
+          color: white;
+          cursor: pointer;
+        }
+        .submit:disabled {
+          background-color: #ccc;
+          color: #666;
+          cursor: not-allowed;
+        }
+        .scroll-button {
+          position: fixed;
+          top: 30%;
+          transform: translateY(-10%);
+          width: 40px;
+          height: 40px;
+          background-color: white;
+          color: #000c;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          z-index: 1000;
+        }
+        .scroll-button .svg {
+          width: 8px;
+          height: 8px;
+          transition: 0.2s ease;
+          }
+        .scroll-button.left {
+          left: -30px;
+        }
+        .scroll-button.right {
+          left: 250px;
+        }
+        .scroll-button:hover {
+          color: black;
+        }
+        .button-container {
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        .button-container button {
+          position: relative;
+          left: -15px;
+          width: 262px;
+          margin: 3px;
+          padding: 8px;
+          background-color: white;
+          color: #03045e;
+          box-shadow: rgba(0, 0, 0, 0.12) 0px 5px 8px -8px, rgba(0, 0, 0, 0.12) 0px 2px 4px -3px, rgba(0, 0, 0, 0.03) 0px 0px 0px 1px, rgba(0, 0, 0, 0.01) 0px 1px 3px 1px;
+          font-size: 16px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          text-align: center;
+          transition: background-color 0.3s ease;
+        }
+    </style>
+    <div class="part-selection-container">
+      <div class="part-selection">
+        ${generateCards(Parts)}
+      </div>
+    </div>
+    <div class="button-container">
+      <button class="submit">Confirm Part</button>
+      <button class="next">Decline Part</button>
+    </div>
+    `;
+
+    function generateCards(parts) {
+      const cards = parts.length;
+      let cardsHTML = '';
+      cardsHTML += '<div class="row">';
+      for (let j = 0; j < cards; j++) {
+        console.log(parts[j].Image)
+        cardsHTML += `<div class="card">
+          <img src="${parts[j].Image}" alt="" id="${parts[j].Parts_Number_Supplier}">
+          <div class="content">
+            <div class="row">
+              <div class="details">
+                <span>${parts[j].Categories}</span>
+                <p>${parts[j].Manufacturer}</p>
+              </div>
+              <div class="price">£${parts[j].Price}</div>
+            </div>
+          </div>
+        </div>`;
+      }
+      cardsHTML += '</div>';
+      return cardsHTML;
+    }
+
+    let selectedParts = [Parts[0]];
+    const submitButton = MultiselectCarouselContainer.querySelector('.submit');
+    const nextButton = MultiselectCarouselContainer.querySelector('.next');
+
+    submitButton.addEventListener('click', function () {
+      window.voiceflow.chat.interact({
+        type: 'complete',
+        payload: { "selected_parts":selectedParts },
+      });
+    });
+
+    nextButton.addEventListener('click', function () {
+      window.voiceflow.chat.interact({
+        type: 'no selection',
+      });
+    });
 
     element.appendChild(MultiselectCarouselContainer);
   },
