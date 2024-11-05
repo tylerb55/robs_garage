@@ -157,6 +157,7 @@ export const MultiselectCarousel = {
           gap: 10px;
         }
         .card {
+          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -172,6 +173,18 @@ export const MultiselectCarousel = {
           border-radius: 8px;
           height: 100%;
           object-fit: contain;
+        }
+        .hover-text {
+          position: absolute;
+          background-color: rgba(0, 0, 0, 0.7);
+          color: white;
+          border-radius: 5px;
+          text-align: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        .card:hover .hover-text {
+          opacity: 1;
         }
         .content {
           display: flex;
@@ -288,6 +301,17 @@ export const MultiselectCarousel = {
     </div>
     `;
 
+    function partDetails(part) {
+      // turn the values of the parts into a string
+      let details = '';
+      Object.entries(part).forEach(([key, value]) => {
+        // exclude the image and id
+        if (key === 'Image' || key === 'Parts_Number_Supplier' || key === '_id') return;
+        details += `${key}: ${value}\n`;
+      });
+      return details;
+    }
+
     function generateCards(parts) {
       const cards = parts.length;
       let cardsHTML = '';
@@ -296,7 +320,8 @@ export const MultiselectCarousel = {
         console.log(parts[j].Image)
         let part = JSON.stringify(parts[j]);
         cardsHTML += `<div class="card">
-          <img src="${parts[j].Image}" alt="" id="${parts[j].Parts_Number_Supplier}">
+          <img class="card-image" src="${parts[j].Image}" alt="" id="${parts[j].Parts_Number_Supplier}">
+          <div class="hover-text">${partDetails(parts[j])}</div>
           <div class="content">
             <div class="row">
               <div class="details">
@@ -319,8 +344,18 @@ export const MultiselectCarousel = {
     const submitButton = MultiselectCarouselContainer.querySelector('.submit');
     const filterButton = MultiselectCarouselContainer.querySelector('.filter');
     const nextButton = MultiselectCarouselContainer.querySelector('.next');
+    const hoverText = MultiselectCarouselContainer.querySelector('.hover-text');
+    const cardImage = MultiselectCarouselContainer.querySelector('.card-image');
     let isSubmitted = false;
 
+  
+    cardImage.addEventListener('mouseover', function () {
+      hoverText.style.opacity = '1';
+    });
+
+    cardImage.addEventListener('mouseout', function () {
+      hoverText.style.opacity = '0';
+    });
 
 
     function updateSubmitButton() {
